@@ -7,7 +7,7 @@ class KohonenSup(object):
     KohonenSup class
         This class implement the Supervised Kohononen Map
     """
-    def __init__(self, n_clusters=2, similarity_radius=0.1, dist="euclidean", randomize=True, dev=True):
+    def __init__(self, n_clusters=2, similarity_radius=0.1, dist="euclidean", randomize=True, dev=True, W0=None):
         """
         KohonenSup constructor
             n_clusters: Number of cluster to be used (default: 2)
@@ -17,7 +17,7 @@ class KohonenSup(object):
             dev: Development flag
         """
         self.n_clusters = n_clusters
-        self.clusters = None
+        self.clusters = W0
         self.cluster_last_used = None
         self.similarity_radius = similarity_radius
         self.dist = dist
@@ -48,7 +48,8 @@ class KohonenSup(object):
         classes = np.unique(trgt);
         if self.clusters is None:
             for icluster in range(len(classes)):
-                new_cluster = data[trgt==classes[icluster]][0]
+                id_rand = np.random.permutation(np.shape(data[trgt==classes[icluster]])[0])[0]
+                new_cluster = data[trgt==classes[icluster]][id_rand]
                 self.create_cluster(new_cluster)
                 
     def fit(self, data, trgt, trn_params=None):
@@ -77,11 +78,12 @@ class KohonenSup(object):
             
         print "Number of events:",trn_data.shape[0]
         
-        self.init_clusters(data, trgt)
+        if (self.clusters is None):
+            self.init_clusters(trn_data, trn_trgt)
         
         for ievent in range(trn_data.shape[0]):
             #print 'ievent: ',ievent
-            self.update_cluster(trn_trgt[ievent],data[ievent,:],trn_params=trn_params)
+            self.update_cluster(trn_trgt[ievent],trn_data[ievent,:],trn_params=trn_params)
                 
         
 '''    def fit(self, x_data, y_data, n_clusters, trn_params=None): #usa o parametro da classe?
