@@ -84,6 +84,20 @@ class KohonenSup(object):
         for ievent in range(trn_data.shape[0]):
             #print 'ievent: ',ievent
             self.update_cluster(trn_trgt[ievent],trn_data[ievent,:],trn_params=trn_params)
+            
+    def predict(self, data):
+        output=np.zeros((data.shape[0],), dtype=np.int)
+        for ievent in range(data.shape[0]):
+            mat_dist = np.zeros([self.clusters.shape[0]])
+            for icluster in range(self.clusters.shape[0]):
+                mat_dist[icluster] = self.calc_dist(data[ievent],self.clusters[icluster,:])
+            #if np.min(mat_dist) > self.similarity_radius:
+            #    continue #??
+                #self.create_cluster(trn_data[ievent,:]) #data does not belong to any cluster...
+            #else:
+            cluster_id = np.argmin(mat_dist)
+            output[ievent]=cluster_id
+        return output
                 
         
 '''    def fit(self, x_data, y_data, n_clusters, trn_params=None): #usa o parametro da classe?
@@ -108,7 +122,6 @@ class KohonenSup(object):
         self.init_clusters(x_data, y_data);
         
         for ievent in range(trn_data.shape[0]):
-            #print 'ievent: ',ievent
             mat_dist = np.zeros([self.clusters.shape[0]])
             for icluster in range(self.clusters.shape[0]):
                 mat_dist[icluster] = self.calc_dist(trn_data[ievent],self.clusters[icluster,:])
