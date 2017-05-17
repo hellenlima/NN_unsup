@@ -7,7 +7,7 @@ class KohonenSup(object):
     KohonenSup class
         This class implement the Supervised Kohononen Map
     """
-    def __init__(self, n_clusters=2, similarity_radius=0.1, dist="euclidean", randomize=True, dev=True, W0=None):
+    def __init__(self, n_clusters=2, similarity_radius=0.1, dist="euclidean", randomize=True, dev=False, W0=None):
         """
         KohonenSup constructor
             n_clusters: Number of cluster to be used (default: 2)
@@ -75,8 +75,9 @@ class KohonenSup(object):
             else:             
                 trn_data = data
             trn_trgt = trgt
-            
-        print "Number of events:",trn_data.shape[0]
+        
+        if self.dev:
+            print "Number of events:",trn_data.shape[0]
         
         if (self.clusters is None):
             self.init_clusters(trn_data, trn_trgt)
